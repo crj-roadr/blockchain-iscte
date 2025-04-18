@@ -1,0 +1,18 @@
+button {
+    margin: 5px;
+}
+
+.default-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    background-color: #3498db;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.default-button:hover {
+    background-color: #2980b9;
+}
