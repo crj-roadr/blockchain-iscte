@@ -1,0 +1,71 @@
+.card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 20%;
+    box-sizing: border-box;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    /* <- Row agora */
+    align-items: center;
+    gap: 15px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+
+.content {
+    flex: 1;
+    /* <- Ocupa o resto do espaço */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* <- centraliza conteúdo */
+    text-align: center;
+}
+
+.card h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.grade {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.progress-bar {
+    width: 85%;
+    height: 15px;
+    background-color: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s ease;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card:hover .icon-container {
+    transform: scale(1.2);
+}

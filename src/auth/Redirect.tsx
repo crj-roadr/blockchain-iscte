@@ -6,7 +6,17 @@ interface Props {
 
 const ProtectedRoute = ({ children }: Props) => {
     const isAuth = localStorage.getItem('auth') === 'true';
-    return isAuth ? <>{children}</> : <Navigate to="/login" />;
+    const isWalletConnected = localStorage.getItem('walletConnected') === 'true';
+
+    if (!isAuth) {
+        return <Navigate to="/login" />;
+    }
+
+    if (!isWalletConnected) {
+        return <Navigate to="/wallet-connect" />;
+    }
+
+    return children;
 };
 
 export default ProtectedRoute;

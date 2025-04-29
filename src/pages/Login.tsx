@@ -18,7 +18,7 @@ export default function Login() {
         if (username && password) {
             localStorage.setItem('auth', 'true');
             localStorage.setItem('user', username);
-            navigate('/');
+            navigate('/wallet-connect');
         } else {
             alert('Por favor preencha os dois campos.');
         }
