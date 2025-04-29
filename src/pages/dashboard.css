@@ -1,0 +1,46 @@
+.container {
+    padding: 1rem;
+}
+
+.title {
+    font-size: 28px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 40px;
+}
+
+
+.calendar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* gap: 20px; */
+    width: 100%;
+}
+
+.calendar-title {
+    font-size: 24px;
+    color: #333;
+}
+
+.bottom-section {
+    display: grid;
+    grid-auto-flow: column;
+    padding-top: 40px;
+}
+
+.courses-container {
+    width: 50vw;
+}
+
+.sub-title {
+    color: #333;
+    font-size: 20px;
+    margin: 20px 40px;
+}
