@@ -33,3 +33,7 @@ export const disconnectWallet = () => {
 export const isWalletConnected = (): string | null => {
     return localStorage.getItem('wallet');
 };
+
+export const getProvider = () => {
+    return new ethers.BrowserProvider((window as any).ethereum);
+};

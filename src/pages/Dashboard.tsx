@@ -3,8 +3,14 @@ import Card from '../components/Card';
 import CalendarCard from '../components/CalendarCard';
 import CourseCardSlider from '../components/CourseCardSlider';
 import { Course } from '../Int/Course';
+import { getCredential, issueCredential } from '../web3/diploma';
 
-export default function Dashboard() {
+type DashboardProps = {
+    user: string;
+    wallet: string;
+};
+
+export default function Dashboard({ user, wallet }: DashboardProps) {
     const activeCourses: Course[] = [
         { code: 10000, name: 'Blockchain' },
         { code: 10001, name: 'AI Ethics' },
@@ -13,9 +19,24 @@ export default function Dashboard() {
         { code: 10004, name: 'Reinforcement Learning' },
     ];
 
+    const studentAddress = wallet;
+    const studentName = user;
+    const degree = 'Masters of Artificial Intelligence';
+    const university = 'Masters';
+
+    const handleIssue = () => {
+        issueCredential(studentAddress, studentName, degree, university);
+    };
+
+    const handleShow = () => {
+        const credential = getCredential(studentAddress);
+    }
+
     return (
         <div className='container'>
             <h2 className='title'>Masters of Artificial Intelligence</h2>
+            <button onClick={_ => handleIssue()}>Issue</button>
+            <button onClick={_ => handleShow()}>Log</button>
             {/* <h3 className='sub-title'>Overview</h3> */}
             <div className='card-container'>
                 <Card title={'Course'} percentage={25}></Card>

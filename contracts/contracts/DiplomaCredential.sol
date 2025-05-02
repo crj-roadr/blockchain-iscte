@@ -10,7 +10,6 @@ contract DiplomaCredential is Ownable {
         string university;
         uint256 issueDate;
         bool issued;
-        string diploma_type;
     }
 
     mapping(address => Credential) public credentials;
@@ -23,17 +22,16 @@ contract DiplomaCredential is Ownable {
         address student,
         string memory studentName,
         string memory degree,
-        string memory diploma_type
+        string memory university
     ) external onlyOwner {
         require(!credentials[student].issued, "Credential already issued");
 
         credentials[student] = Credential({
             studentName: studentName,
             degree: degree,
-            university: "ISCTE",
+            university: university,
             issueDate: block.timestamp,
-            issued: true,
-            diploma_type: diploma_type
+            issued: true
         });
 
         emit CredentialIssued(student, degree);

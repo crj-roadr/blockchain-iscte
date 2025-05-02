@@ -1,9 +1,11 @@
 import { ethers } from "hardhat";
 
 async function main() {
-    const contract = await ethers.deployContract("StudentCourse");
-    await contract.waitForDeployment();
-    console.log(`StudentCourse deployed at ${contract.target}`);
+    const DiplomaFactory = await ethers.getContractFactory("DiplomaCredential");
+    const diploma = await DiplomaFactory.deploy();
+    await diploma.waitForDeployment();
+
+    console.log(`DiplomaCredential deployed at ${diploma.target}`);
 }
 
 main().catch((error) => {
