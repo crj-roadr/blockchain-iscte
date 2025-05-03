@@ -30,6 +30,11 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const handleShow = () => {
         const credential = getCredential(studentAddress);
+        credential.then((res) => {
+            console.log('Credential:', res);
+            alert(`Credential: ${res}`);
+
+        });
     }
 
     return (

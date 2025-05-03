@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { getProvider } from './web3';
+import { getProvider, switchToAmoy } from './web3';
 import { contractABI, contractAddress } from "./contract.ts";
 
 export const issueCredential = async (
@@ -8,6 +8,7 @@ export const issueCredential = async (
     degree: string,
     university: string
 ) => {
+    await switchToAmoy();
     const provider = getProvider();
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -27,10 +28,10 @@ export const issueCredential = async (
 };
 
 export const getCredential = async (studentAddress: string) => {
+    await switchToAmoy();
     const provider = getProvider();
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-    console.log("Contract Address:", contract);
     try {
         const credential = await contract.getCredential(studentAddress);
         return credential;

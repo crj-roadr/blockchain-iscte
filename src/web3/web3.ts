@@ -15,6 +15,7 @@ export const connectWallet = async (): Promise<string | null> => {
 
     try {
         const provider = new ethers.BrowserProvider((window as any).ethereum);
+        await switchToAmoy();
         const accounts = await provider.send("eth_requestAccounts", []);
         const account = accounts[0];
 
@@ -36,4 +37,40 @@ export const isWalletConnected = (): string | null => {
 
 export const getProvider = () => {
     return new ethers.BrowserProvider((window as any).ethereum);
+};
+
+export const switchToAmoy = async () => {
+    const eth = (window as any).ethereum;
+    try {
+        await eth.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x13882" }], // 0x13882 is 80002 in hex
+        });
+    } catch (switchError: any) {
+        // This error code means the chain hasn't been added to MetaMask
+        if (switchError.code === 4902) {
+            try {
+                await eth.request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                        {
+                            chainId: "0x13882",
+                            chainName: "Polygon Amoy Testnet",
+                            rpcUrls: ["https://rpc-amoy.polygon.technology"],
+                            nativeCurrency: {
+                                name: "MATIC",
+                                symbol: "MATIC",
+                                decimals: 18,
+                            },
+                            blockExplorerUrls: ["https://amoy.polygonscan.com"],
+                        },
+                    ],
+                });
+            } catch (addError) {
+                console.error("Failed to add Amoy network", addError);
+            }
+        } else {
+            console.error("Failed to switch to Amoy network", switchError);
+        }
+    }
 };

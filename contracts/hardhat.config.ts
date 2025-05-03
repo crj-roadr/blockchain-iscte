@@ -13,6 +13,9 @@ const config: HardhatUserConfig = {
       chainId: 80002,
     },
   },
+  etherscan: {
+    apiKey: process.env.POLYGONSCAN_API_KEY
+  },
 };
 
 export default config;
