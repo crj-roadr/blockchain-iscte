@@ -2,8 +2,9 @@ import './dashboard.css';
 import Card from '../components/Card';
 import CalendarCard from '../components/CalendarCard';
 import CourseCardSlider from '../components/CourseCardSlider';
-import { Course } from '../Int/Course';
+import { ICourse, ISubject } from '../Interfaces/ICourse';
 import { getCredential, issueCredential } from '../web3/diploma';
+import { useState } from 'react';
 
 type DashboardProps = {
     user: string;
@@ -11,41 +12,49 @@ type DashboardProps = {
 };
 
 export default function Dashboard({ user, wallet }: DashboardProps) {
-    const activeCourses: Course[] = [
-        { code: 10000, name: 'Blockchain' },
-        { code: 10001, name: 'AI Ethics' },
-        { code: 10002, name: 'NLP' },
-        { code: 10003, name: 'Computer Vision' },
-        { code: 10004, name: 'Reinforcement Learning' },
-    ];
+    const [activeSubjects, setActiveSubjects] = useState<ISubject[]>([
+        { code: 10000, name: 'Blockchain', completed: false },
+        { code: 10001, name: 'AI Ethics', completed: false },
+        { code: 10002, name: 'NLP', completed: true },
+        { code: 10003, name: 'Computer Vision', completed: true },
+        { code: 10004, name: 'Reinforcement Learning', completed: true },
+    ]);
+    const course: ICourse =
+    {
+        code: 80001,
+        name: 'Masters of Artificial Intelligence',
+        university: 'ISCTE',
+        subjects: activeSubjects
+    }
+    const [cousePercentage, setCoursePercentage] = useState(60);
+    const [yearPercentage, _] = useState(50);
 
     const studentAddress = wallet;
     const studentName = user;
-    const degree = 'Masters of Artificial Intelligence';
-    const university = 'Masters';
 
-    const handleIssue = () => {
-        issueCredential(studentAddress, studentName, degree, university);
+    const markSubjectCompleted = (code: number) => {
+        setActiveSubjects(prevSubjects =>
+            prevSubjects.map(subject =>
+                subject.code === code ? { ...subject, completed: true } : subject
+            )
+        );
+        setCoursePercentage(() => {
+            const completedSubjects = activeSubjects.filter(subject => subject.completed).length + 1;
+            const totalSubjects = activeSubjects.length;
+            return Math.round((completedSubjects / totalSubjects) * 100);
+        });
     };
 
-    const handleShow = () => {
-        const credential = getCredential(studentAddress);
-        credential.then((res) => {
-            console.log('Credential:', res);
-            alert(`Credential: ${res}`);
-
-        });
-    }
+    const handleIssue = () => {
+        issueCredential(studentAddress, studentName, course.name, course.university);
+    };
 
     return (
         <div className='container'>
-            <h2 className='title'>Masters of Artificial Intelligence</h2>
-            <button onClick={_ => handleIssue()}>Issue</button>
-            <button onClick={_ => handleShow()}>Log</button>
-            {/* <h3 className='sub-title'>Overview</h3> */}
+            <h2 className='title'>{course.name}</h2>
             <div className='card-container'>
-                <Card title={'Course'} percentage={25}></Card>
-                <Card title={'Current year'} percentage={50}></Card>
+                <Card title={'Course'} onClaim={() => handleIssue()} cousePercentage={cousePercentage}></Card>
+                <Card title={'Current year'} yearPercentage={yearPercentage}></Card>
                 <Card title={'Grade'} grade={'16.5/20'}></Card>
                 <Card title={'Wallet'}></Card>
             </div>
@@ -53,9 +62,8 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
             <div className='bottom-section'>
                 <div className='courses-container'>
 
-                    <h3 className='sub-title'>Active courses</h3>
-                    <CourseCardSlider activeCourses={activeCourses}></CourseCardSlider>
-
+                    <h3 className='sub-title'>Active subjects</h3>
+                    {course.subjects && <CourseCardSlider onMarkCompleted={markSubjectCompleted} activeSubjects={course.subjects}></CourseCardSlider>}
                 </div>
                 <div className='calendar-section'>
                     <h3 className='calendar-title'>Calendar</h3>
