@@ -3,8 +3,9 @@ import Card from '../components/Card';
 import CalendarCard from '../components/CalendarCard';
 import CourseCardSlider from '../components/CourseCardSlider';
 import { ICourse, ISubject } from '../Interfaces/ICourse';
-import { getCredential, issueCredential } from '../web3/diploma';
+import { issueCredential } from '../web3/diploma';
 import { useState } from 'react';
+import Spinner from '../components/Spinner';
 
 type DashboardProps = {
     user: string;
@@ -28,6 +29,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     }
     const [cousePercentage, setCoursePercentage] = useState(60);
     const [yearPercentage, _] = useState(50);
+    const [loading, setLoading] = useState(false);
 
     const studentAddress = wallet;
     const studentName = user;
@@ -46,7 +48,13 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     };
 
     const handleIssue = () => {
-        issueCredential(studentAddress, studentName, course.name, course.university);
+        setLoading(true);
+        issueCredential(studentAddress, studentName, course.name, course.university, true).then(() => {
+            setLoading(false);
+        }).catch((err) => {
+            setLoading(false);
+            console.error('Error issuing credential:', err);
+        });
     };
 
     return (
@@ -54,6 +62,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
             <h2 className='title'>{course.name}</h2>
             <div className='card-container'>
                 <Card title={'Course'} onClaim={() => handleIssue()} cousePercentage={cousePercentage}></Card>
+                {loading && <Spinner />}
                 <Card title={'Current year'} yearPercentage={yearPercentage}></Card>
                 <Card title={'Grade'} grade={'16.5/20'}></Card>
                 <Card title={'Wallet'}></Card>
@@ -61,7 +70,6 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
             <div className='bottom-section'>
                 <div className='courses-container'>
-
                     <h3 className='sub-title'>Active subjects</h3>
                     {course.subjects && <CourseCardSlider onMarkCompleted={markSubjectCompleted} activeSubjects={course.subjects}></CourseCardSlider>}
                 </div>

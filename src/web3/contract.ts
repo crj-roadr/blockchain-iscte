@@ -1,4 +1,4 @@
-export const contractAddress = "0x55141F63C6569cEAf35f2542229De25192008603";
+export const contractAddress = "0x7D6E2BBB2835E203b6090BB55dD0366a4ee559b9";
 
 export const contractABI = [
     {
@@ -64,6 +64,25 @@ export const contractABI = [
             }
         ],
         "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "caller",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "hasCredential",
+                "type": "bool"
+            }
+        ],
+        "name": "TryingToRevoke",
         "type": "event"
     },
     {
@@ -172,6 +191,11 @@ export const contractABI = [
                 "internalType": "string",
                 "name": "university",
                 "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "issued",
+                "type": "bool"
             }
         ],
         "name": "issueCredential",
@@ -195,6 +219,19 @@ export const contractABI = [
     {
         "inputs": [],
         "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "student",
+                "type": "address"
+            }
+        ],
+        "name": "revokeCredential",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

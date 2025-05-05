@@ -22,7 +22,8 @@ contract DiplomaCredential is Ownable {
         address student,
         string memory studentName,
         string memory degree,
-        string memory university
+        string memory university,
+        bool issued
     ) external onlyOwner {
         require(!credentials[student].issued, "Credential already issued");
 
@@ -31,7 +32,7 @@ contract DiplomaCredential is Ownable {
             degree: degree,
             university: university,
             issueDate: block.timestamp,
-            issued: true
+            issued: issued
         });
 
         emit CredentialIssued(student, degree);
@@ -45,6 +46,15 @@ contract DiplomaCredential is Ownable {
             "No credential issued to this student"
         );
         return credentials[student];
+    }
+
+    event TryingToRevoke(address caller, bool hasCredential);
+
+    function revokeCredential(address student) external onlyOwner {
+        emit TryingToRevoke(msg.sender, credentials[student].issued);
+
+        require(credentials[student].issued, "No credential to revoke");
+        delete credentials[student];
     }
 
     modifier preventTransfer(address from, address to) {

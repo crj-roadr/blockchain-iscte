@@ -20,7 +20,8 @@ describe("DiplomaCredential", function () {
       student.address,
       "André Costa",
       "MSc in Artificial Intelligence",
-      "ISCTE"
+      "ISCTE",
+      true
     );
     await tx.wait();
 
@@ -37,7 +38,8 @@ describe("DiplomaCredential", function () {
       student.address,
       "André Costa",
       "MSc in AI",
-      "ISCTE"
+      "ISCTE",
+      true
     );
 
     await expect(
@@ -45,12 +47,29 @@ describe("DiplomaCredential", function () {
         student.address,
         "André Costa",
         "MSc in AI",
-        "ISCTE"
+        "ISCTE",
+        true
       )
     ).to.be.revertedWith("Credential already issued");
   });
 
   it("should not return credentials for students without one", async function () {
+    await expect(diploma.getCredential(student.address)).to.be.revertedWith(
+      "No credential issued to this student"
+    );
+  });
+
+  it("should remove a credential and prevent future access", async function () {
+    await diploma.issueCredential(
+      student.address,
+      "André Costa",
+      "MSc in AI",
+      "ISCTE",
+      true
+    );
+
+    await diploma.revokeCredential(student.address);
+
     await expect(diploma.getCredential(student.address)).to.be.revertedWith(
       "No credential issued to this student"
     );
