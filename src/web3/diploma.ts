@@ -13,6 +13,7 @@ export const issueCredential = async (
     const provider = getProvider();
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    console.log("contract", contract);
     try {
         const tx = await contract.issueCredential(
             studentAddress,
@@ -52,6 +53,7 @@ export const revokeCredential = async (studentAddress: string) => {
 
     try {
         const credential = await contract.revokeCredential(studentAddress);
+
         await credential.wait();
         alert('Credential was revoked');
         return true;
