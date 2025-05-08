@@ -6,21 +6,18 @@ export const issueCredential = async (
     studentAddress: string,
     studentName: string,
     degree: string,
-    university: string,
-    issued: boolean
+    university: string
 ) => {
     await switchToAmoy();
     const provider = getProvider();
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    console.log("contract", contract);
     try {
         const tx = await contract.issueCredential(
             studentAddress,
             studentName,
             degree,
-            university,
-            issued
+            university
         );
         await tx.wait();
         alert('Credential issued successfully!');
@@ -40,7 +37,6 @@ export const getCredential = async (studentAddress: string) => {
         return credential;
     } catch (error) {
         console.error('Error getting credential:', error);
-        // alert('Failed to get credential!');
     }
 };
 
@@ -53,7 +49,6 @@ export const revokeCredential = async (studentAddress: string) => {
 
     try {
         const credential = await contract.revokeCredential(studentAddress);
-
         await credential.wait();
         alert('Credential was revoked');
         return true;

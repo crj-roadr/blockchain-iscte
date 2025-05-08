@@ -22,8 +22,7 @@ contract DiplomaCredential is Ownable {
         address student,
         string memory studentName,
         string memory degree,
-        string memory university,
-        bool issued
+        string memory university
     ) external onlyOwner {
         require(!credentials[student].issued, "Credential already issued");
 
@@ -32,7 +31,7 @@ contract DiplomaCredential is Ownable {
             degree: degree,
             university: university,
             issueDate: block.timestamp,
-            issued: issued
+            issued: true
         });
 
         emit CredentialIssued(student, degree);

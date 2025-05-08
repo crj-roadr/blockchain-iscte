@@ -49,7 +49,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const handleIssue = () => {
         setLoading(true);
-        issueCredential(studentAddress, studentName, course.name, course.university, true).then(() => {
+        issueCredential(studentAddress, studentName, course.name, course.university).then(() => {
             setLoading(false);
         }).catch((err) => {
             setLoading(false);

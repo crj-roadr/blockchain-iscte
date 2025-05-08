@@ -20,8 +20,7 @@ describe("DiplomaCredential", function () {
       student.address,
       "André Costa",
       "MSc in Artificial Intelligence",
-      "ISCTE",
-      true
+      "ISCTE"
     );
     await tx.wait();
 
@@ -38,8 +37,7 @@ describe("DiplomaCredential", function () {
       student.address,
       "André Costa",
       "MSc in AI",
-      "ISCTE",
-      true
+      "ISCTE"
     );
 
     await expect(
@@ -47,8 +45,7 @@ describe("DiplomaCredential", function () {
         student.address,
         "André Costa",
         "MSc in AI",
-        "ISCTE",
-        true
+        "ISCTE"
       )
     ).to.be.revertedWith("Credential already issued");
   });
@@ -64,8 +61,7 @@ describe("DiplomaCredential", function () {
       student.address,
       "André Costa",
       "MSc in AI",
-      "ISCTE",
-      true
+      "ISCTE"
     );
 
     await diploma.revokeCredential(student.address);

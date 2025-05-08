@@ -11,3 +11,23 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
+
+
+Run the following command to deploy the smart contract to the network:
+
+```shell
+npx hardhat run scripts/deploy.ts --network amoy 
+```
+
+
+Run the following command to deploy the smart contract to the network:
+
+```shell
+npx hardhat run scripts/deploy.ts --network amoy 
+```
+
+Then run the following command with the result of the previous one:
+
+```shell
+npx hardhat verify --network amoy {contract_code}
+```
