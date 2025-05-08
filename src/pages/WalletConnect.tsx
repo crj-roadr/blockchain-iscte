@@ -36,9 +36,9 @@ export default function WalletConnect() {
     return (
         <div className="login-container">
             <div className="login-box">
-                <h2>Conectar carteira</h2>
+                <h2>Welcome! Please connect your wallet to continue.</h2>
                 <div className='login-input'>
-                    <Button text='Ligar carteira' onClick={handleConnect}></Button>
+                    <Button text='Connect wallet' onClick={handleConnect}></Button>
                 </div>
             </div>
         </div>

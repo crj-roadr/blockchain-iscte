@@ -8,7 +8,8 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
-  const user = localStorage.getItem('user');
+  const user = localStorage.getItem('user') || '';
+  const wallet = localStorage.getItem('wallet') || '';
   const location = useLocation();
 
   const hideLayout = location.pathname === '/login' || location.pathname === '/wallet-connect';
@@ -26,7 +27,7 @@ export default function App() {
               path="/"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Dashboard user={user} wallet={wallet} />
                 </ProtectedRoute>
               }
             />

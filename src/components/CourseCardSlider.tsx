@@ -1,14 +1,15 @@
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import './coursecardslider.css';
-import { Course } from '../Int/Course';
+import { ISubject } from '../Interfaces/ICourse';
 
 
 type CourseCardProps = {
-    activeCourses: Course[];
+    activeSubjects: ISubject[];
+    onMarkCompleted: (code: number) => void;
 };
 
-export default function CourseCardSlider({ activeCourses }: CourseCardProps) {
+export default function CourseCardSlider({ activeSubjects, onMarkCompleted }: CourseCardProps) {
     const responsive = {
         superLargeDesktop: {
             breakpoint: { max: 4000, min: 3000 },
@@ -31,10 +32,24 @@ export default function CourseCardSlider({ activeCourses }: CourseCardProps) {
     return (
         <div className='course-slider-wrapper'>
             <Carousel responsive={responsive}>
-                {activeCourses.map((course, index) => (
-                    <div key={index} className='course-card'>
-                        <div className="course-code">{course.code}</div>
-                        <div className="course-name">{course.name}</div>
+                {activeSubjects.map((subject, index) => (
+                    <div key={index} className={`course-card ${subject.completed ? 'completed' : ''}`}>
+                        <div className="course-code">{subject.code}</div>
+                        <div className="course-name">{subject.name}</div>
+                        <div className="card-spacer"></div>
+
+                        {subject.completed ? (
+                            <div className="completed-label">
+                                <span className="check-icon">✔</span> Completed
+                            </div>
+                        ) : (
+                            <button
+                                className="complete-button"
+                                onClick={() => onMarkCompleted(subject.code)}
+                            >
+                                Complete
+                            </button>
+                        )}
                     </div>
                 ))}
             </Carousel>

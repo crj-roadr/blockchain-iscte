@@ -3,11 +3,13 @@ import './card.css';
 
 type CardProps = {
     title: string;
-    percentage?: number;
+    cousePercentage?: number;
+    onClaim?: () => void;
+    yearPercentage?: number;
     grade?: string;
 };
 
-export default function Card({ title, percentage, grade }: CardProps) {
+export default function Card({ title, cousePercentage, onClaim, yearPercentage, grade }: CardProps) {
     const getIcon = () => {
         switch (title) {
             case 'Course':
@@ -36,13 +38,28 @@ export default function Card({ title, percentage, grade }: CardProps) {
                     <p className="grade">{grade}</p>
                 )}
 
-                {percentage !== undefined && (
+                {yearPercentage && (
                     <div className="progress-bar">
                         <div
                             className="progress"
-                            style={{ width: `${percentage}%` }}
+                            style={{ width: `${yearPercentage}%` }}
                         ></div>
                     </div>
+                )}
+
+                {cousePercentage !== undefined && title === "Course" && cousePercentage < 100 && (
+                    <div className="progress-bar">
+                        <div
+                            className="progress"
+                            style={{ width: `${cousePercentage}%` }}
+                        ></div>
+                    </div>
+                )}
+
+                {cousePercentage === 100 && onClaim && title === "Course" && (
+                    <button onClick={() => onClaim()} className="claim-button">
+                        Claim
+                    </button>
                 )}
             </div>
         </div>

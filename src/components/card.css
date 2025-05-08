@@ -69,3 +69,24 @@
 .card:hover .icon-container {
     transform: scale(1.2);
 }
+
+.claim-container {
+    margin-top: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.claim-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.claim-button:hover {
+    background-color: #388e3c;
+}

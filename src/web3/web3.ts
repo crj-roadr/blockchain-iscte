@@ -15,6 +15,7 @@ export const connectWallet = async (): Promise<string | null> => {
 
     try {
         const provider = new ethers.BrowserProvider((window as any).ethereum);
+        await switchToAmoy();
         const accounts = await provider.send("eth_requestAccounts", []);
         const account = accounts[0];
 
@@ -33,3 +34,47 @@ export const disconnectWallet = () => {
 export const isWalletConnected = (): string | null => {
     return localStorage.getItem('wallet');
 };
+
+export const getProvider = () => {
+    return new ethers.BrowserProvider((window as any).ethereum);
+};
+
+export const switchToAmoy = async () => {
+    const eth = (window as any).ethereum;
+    try {
+        await eth.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x13882" }],
+        });
+    } catch (switchError: any) {
+        if (switchError.code === 4902) {
+            switchToAmoy();
+        }
+        else console.error("Failed to switch to Amoy network", switchError);
+    }
+};
+
+
+export const addAmoyTestnet = async () => {
+    const eth = (window as any).ethereum;
+    try {
+        await eth.request({
+            method: "wallet_addEthereumChain",
+            params: [
+                {
+                    chainId: "0x13882",
+                    chainName: "Polygon Amoy Testnet",
+                    rpcUrls: ["https://rpc-amoy.polygon.technology"],
+                    nativeCurrency: {
+                        name: "MATIC",
+                        symbol: "MATIC",
+                        decimals: 18,
+                    },
+                    blockExplorerUrls: ["https://amoy.polygonscan.com"],
+                },
+            ],
+        });
+    } catch (addError) {
+        console.error("Failed to add Amoy network", addError);
+    }
+}
