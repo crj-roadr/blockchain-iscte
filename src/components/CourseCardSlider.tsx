@@ -2,6 +2,7 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import './coursecardslider.css';
 import { ISubject } from '../Interfaces/ICourse';
+import Button from './Button';
 
 
 type CourseCardProps = {
@@ -43,12 +44,7 @@ export default function CourseCardSlider({ activeSubjects, onMarkCompleted }: Co
                                 <span className="check-icon">✔</span> Completed
                             </div>
                         ) : (
-                            <button
-                                className="complete-button"
-                                onClick={() => onMarkCompleted(subject.code)}
-                            >
-                                Complete
-                            </button>
+                            <Button text='Complete' onClick={() => onMarkCompleted(subject.code)}></Button>
                         )}
                     </div>
                 ))}

@@ -6,6 +6,7 @@ import Profile from './pages/Wallet';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
+import Store from './pages/Store';
 
 export default function App() {
   const user = localStorage.getItem('user') || '';
@@ -28,6 +29,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard user={user} wallet={wallet} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/store"
+              element={
+                <ProtectedRoute>
+                  <Store />
                 </ProtectedRoute>
               }
             />

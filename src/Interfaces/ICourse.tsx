@@ -9,5 +9,6 @@ export interface ICourse {
     code: number;
     name: string;
     university: string;
+    concluded: boolean;
     subjects?: ISubject[];
 }
