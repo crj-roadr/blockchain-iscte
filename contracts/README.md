@@ -1,33 +1,29 @@
-# Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+# Step-by-step to configure a local network:
+# Important: Ensure .env is created in the project_folder/contracts folder
 
-Try running some of the following tasks:
-
+1. To run a local blockchain use the following (location must be project_folder/contracts):
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
 npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+```
+
+2. Then, in the console some accounts are shown. Save the key in the .env folder (private_key_local), and import the account to your wallet (using the same private key).
+
+3. Deploy the contract using the following command:
+```shell
+npx hardhat run scripts/deploy.ts --network localhost
 ```
 
 
 Run the following command to deploy the smart contract to the network:
+# Note: network variable can be either localhost (local network) or amoy (public)
 
 ```shell
-npx hardhat run scripts/deploy.ts --network amoy 
+npx hardhat run scripts/deploy.ts --network {network} 
 ```
 
-
-Run the following command to deploy the smart contract to the network:
-
-```shell
-npx hardhat run scripts/deploy.ts --network amoy 
-```
-
-Then run the following command with the result of the previous one:
+Then run the following command with the result of the previous one (public networks only):
 
 ```shell
-npx hardhat verify --network amoy {contract_code}
+npx hardhat verify --network {network} {contract_code}
 ```

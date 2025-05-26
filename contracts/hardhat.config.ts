@@ -17,6 +17,7 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY_LOCAL || ""],
     }
   },
+  //this is not needed for localhost
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY
   },

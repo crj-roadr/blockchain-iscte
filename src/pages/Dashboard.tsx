@@ -109,8 +109,8 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
             ) : (
                 <div className="no-course">
                     <div className="course-completed-message">
-                        <h2 className='title'>Parabéns!</h2>
-                        <p className='conclusion-subtitle'>Concluiste o teu curso <strong>{course?.name}</strong></p>
+                        <h2 className='title'>Congratulations!</h2>
+                        <p className='conclusion-subtitle'>You have completed your course <strong>{course?.name}</strong></p>
                     </div>
                 </div>
             )
