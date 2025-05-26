@@ -6,10 +6,10 @@ type CardProps = {
     cousePercentage?: number;
     onClaim?: () => void;
     yearPercentage?: number;
-    grade?: string;
+    subtext?: string;
 };
 
-export default function Card({ title, cousePercentage, onClaim, yearPercentage, grade }: CardProps) {
+export default function Card({ title, cousePercentage, onClaim, yearPercentage, subtext }: CardProps) {
     const getIcon = () => {
         switch (title) {
             case 'Course':
@@ -34,8 +34,8 @@ export default function Card({ title, cousePercentage, onClaim, yearPercentage, 
             <div className="content">
                 <h2>{title}</h2>
 
-                {title === 'Grade' && grade && (
-                    <p className="grade">{grade}</p>
+                {(title === 'Grade' || title == 'Wallet') && subtext && (
+                    <p className="grade">{subtext}</p>
                 )}
 
                 {yearPercentage && (

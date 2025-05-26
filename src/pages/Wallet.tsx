@@ -17,6 +17,7 @@ export default function Wallet() {
     const [certificate, setCertificate] = useState<Certificate | null>(null);
     const [loading, setLoading] = useState(false);
 
+
     useEffect(() => {
         const fetchData = async () => {
             const connected = isWalletConnected();
@@ -47,7 +48,10 @@ export default function Wallet() {
 
         try {
             await revokeCredential(wallet).then((res) => {
-                if (res) setCertificate(null);
+                if (res) {
+                    setCertificate(null);
+                    localStorage.removeItem('course');
+                }
             });
         } catch (err: any) {
             console.error('Error revoking certificate:', err);

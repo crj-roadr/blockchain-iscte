@@ -12,7 +12,12 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY || ""],
       chainId: 80002,
     },
+    localhost: {
+      url: "http://127.0.0.1:8545",
+      accounts: [process.env.PRIVATE_KEY_LOCAL || ""],
+    }
   },
+  //this is not needed for localhost
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY
   },
