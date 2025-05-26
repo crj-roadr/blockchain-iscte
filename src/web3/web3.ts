@@ -54,7 +54,6 @@ export const switchToAmoy = async () => {
     }
 };
 
-
 export const addAmoyTestnet = async () => {
     const eth = (window as any).ethereum;
     try {
@@ -78,3 +77,43 @@ export const addAmoyTestnet = async () => {
         console.error("Failed to add Amoy network", addError);
     }
 }
+
+export const switchToLocalhost = async () => {
+    const eth = (window as any).ethereum;
+    try {
+        await eth.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x7A69" }],
+        });
+    } catch (switchError: any) {
+        if (switchError.code === 4902) {
+            await addLocalhostNetwork();
+        } else {
+            console.error("Failed to switch to Localhost network", switchError);
+        }
+    }
+};
+
+export const addLocalhostNetwork = async () => {
+    const eth = (window as any).ethereum;
+    try {
+        await eth.request({
+            method: "wallet_addEthereumChain",
+            params: [
+                {
+                    chainId: "0x7A69",
+                    chainName: "Hardhat Localhost",
+                    rpcUrls: ["http://127.0.0.1:8545"],
+                    nativeCurrency: {
+                        name: "ETH",
+                        symbol: "ETH",
+                        decimals: 18,
+                    },
+                    blockExplorerUrls: [],
+                },
+            ],
+        });
+    } catch (addError) {
+        console.error("Failed to add localhost network", addError);
+    }
+};

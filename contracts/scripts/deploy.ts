@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-    const DiplomaFactory = await ethers.getContractFactory("DiplomaCredential");
-    const contract = await DiplomaFactory.deploy();
+    const DiplomaCredential = await ethers.getContractFactory("DiplomaCredential");
+    const contract = await DiplomaCredential.deploy();
     await contract.waitForDeployment();
 
 
@@ -20,6 +20,9 @@ async function main() {
 export const contractAddress = "${contractAddress}";
 export const contractABI = ${JSON.stringify(contractABI, null, 2)};
     `;
+
+    const [deployer] = await ethers.getSigners();
+    console.log("Contract deployed by:", await deployer.getAddress());
 
     fs.writeFileSync(outputPath, output.trim());
     console.log(`Contract deployed to: ${contractAddress}`);
