@@ -6,6 +6,8 @@ import { ICourse, ISubject } from '../Interfaces/ICourse';
 import { issueCredential } from '../web3/diploma';
 import { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
+import { rewardTokens, getTokenBalance } from '../web3/course-token';
+
 
 type DashboardProps = {
     user: string;
@@ -29,6 +31,7 @@ const defaultCourse: ICourse = {
 };
 
 export default function Dashboard({ user, wallet }: DashboardProps) {
+    const [tokenBalance, setTokenBalance] = useState<string>('0');
     const [course, setCourse] = useState<ICourse>(() => {
         const saved = localStorage.getItem('course');
         return saved ? JSON.parse(saved) : defaultCourse;
@@ -48,20 +51,31 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     useEffect(() => {
         localStorage.setItem('course', JSON.stringify(course));
+        if (wallet) {
+            fetchBalance();
+        }
     }, [course]);
 
-    const markSubjectCompleted = (code: number) => {
-        setActiveSubjects(prevSubjects =>
-            prevSubjects.map(subject =>
-                subject.code === code ? { ...subject, completed: true } : subject
-            )
-        );
+    const markSubjectCompleted = async (completeSubject: ISubject) => {
+        setLoading(true);
+        const rewarded = await rewardTokens(wallet, 10);
+        const updatedBalance = await getTokenBalance(wallet);
+        setTokenBalance(updatedBalance);
 
-        setCoursePercentage(() => {
-            const completedSubjects = activeSubjects.filter(subject => subject.completed).length + 1;
-            const totalSubjects = activeSubjects.length;
-            return Math.round((completedSubjects / totalSubjects) * 100);
-        });
+        if (rewarded) {
+            setActiveSubjects(prevSubjects =>
+                prevSubjects.map(subject =>
+                    subject.code === completeSubject.code ? { ...subject, completed: true } : subject
+                )
+            );
+
+            setCoursePercentage(() => {
+                const completedSubjects = activeSubjects.filter(subject => subject.completed).length + 1;
+                const totalSubjects = activeSubjects.length;
+                return Math.round((completedSubjects / totalSubjects) * 100);
+            });
+        }
+        setLoading(false);
     };
 
     const handleIssue = () => {
@@ -77,6 +91,11 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
             });
     };
 
+    const fetchBalance = async () => {
+        const balance = await getTokenBalance(wallet);
+        setTokenBalance(balance);
+    };
+
     return (
         <div className='container'>
             {course && !course.concluded ? (
@@ -87,7 +106,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                         {loading && <Spinner />}
                         <Card title={'Current year'} yearPercentage={yearPercentage} />
                         <Card title={'Grade'} subtext={'16.5/20'} />
-                        <Card title={'Wallet'} subtext={'15 tokens'} />
+                        <Card title={'Wallet'} subtext={`${parseFloat(tokenBalance)} tokens`} />
                     </div>
 
                     <div className='bottom-section'>
