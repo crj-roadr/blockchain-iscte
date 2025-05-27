@@ -7,7 +7,7 @@ import Button from './Button';
 
 type CourseCardProps = {
     activeSubjects: ISubject[];
-    onMarkCompleted: (code: number) => void;
+    onMarkCompleted: (completedSubject: ISubject) => void;
 };
 
 export default function CourseCardSlider({ activeSubjects, onMarkCompleted }: CourseCardProps) {
@@ -44,7 +44,7 @@ export default function CourseCardSlider({ activeSubjects, onMarkCompleted }: Co
                                 <span className="check-icon">✔</span> Completed
                             </div>
                         ) : (
-                            <Button text='Complete' onClick={() => onMarkCompleted(subject.code)}></Button>
+                            <Button text='Complete' onClick={() => onMarkCompleted(subject)}></Button>
                         )}
                     </div>
                 ))}
