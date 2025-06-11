@@ -29,6 +29,17 @@ export const getTokenBalance = async (studentAddress: string) => {
     }
 };
 
+export const getSymbol = async () => {
+    const contract = await getContract();
+    try {
+        const symbol = await contract.symbol();
+        return symbol;
+    } catch (error) {
+        console.error('Error fetching token symbol:', error);
+        return "Unknown";
+    }
+};
+
 
 export const buyItem = async (item: IStoreItem) => {
     const contract = await getContract();

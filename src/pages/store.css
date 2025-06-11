@@ -11,13 +11,21 @@ h1 {
     margin-bottom: 2rem;
 }
 
-.wallet-info {
-    text-align: center;
-    margin-bottom: 2rem;
+.balance-container {
+    display: flex;
+    justify-content: flex-end;
+    position: sticky;
+    top: 1rem;
+    z-index: 10;
+}
+
+.balance-info {
     background: white;
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    text-align: left;
+    min-width: 10%;
 }
 
 .items-grid {
@@ -34,7 +42,6 @@ h1 {
 .item-card h2 {
     margin-top: 0;
 }
-
 
 .item-card {
     background: #ffffff;
