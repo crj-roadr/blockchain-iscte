@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./Store.css";
 import Button from "../components/Button";
 import { getProvider } from "../web3/web3";
-import { buyItem, getTokenBalance } from "../web3/course-token";
+import { buyItem, getTokenBalance, getSymbol } from "../web3/course-token";
 
 export interface IStoreItem {
     id: number;
@@ -19,21 +19,24 @@ const storeItems: IStoreItem[] = [
     { id: 1004, name: "Spotify Premium", price: "5", description: "Unlimited ad-free music streaming.", category: "Software" },
 
     { id: 2001, name: "Sweatshirt", price: "25", description: "Unique branded merchandise.", category: "Merch" },
-    { id: 2003, name: "Blockchain Stickers", price: "1", description: "Sticker pack to customize your laptop.", category: "Merch" },
+    { id: 2002, name: "Blockchain Stickers", price: "1", description: "Sticker pack to customize your laptop.", category: "Merch" },
 ];
 
 export default function Store() {
     const [account, setAccount] = useState<string>("");
     const [balance, setBalance] = useState<string>("0");
     const [wallet, setWallet] = useState<string>("");
+    const [symbol, setSymbol] = useState<string>("");
 
     useEffect(() => {
         const init = async () => {
             const provider = getProvider();
             const signer = await provider.getSigner();
             const address = await signer.getAddress();
+            const symbol = await getSymbol();
             setWallet(address);
             setAccount(address);
+            setSymbol(symbol);
         };
         init();
     }, []);
@@ -62,11 +65,10 @@ export default function Store() {
 
     return (
         <div className="store-container">
-            <h2 className='title'>Store</h2>
-
-            <div className="wallet-info">
-                <p><strong>Wallet:</strong> {account}</p>
-                <p><strong>Balance:</strong> {parseFloat(balance)} Tokens</p>
+            <div className="balance-container">
+                <div className="balance-info">
+                    <p><strong>Balance:</strong> {parseFloat(balance)} {symbol}</p>
+                </div>
             </div>
 
             {Object.entries(groupedItems).map(([category, items]) => (
@@ -78,7 +80,7 @@ export default function Store() {
                                 <h2>{item.name}</h2>
                                 <p>{item.description}</p>
                                 <div className="item-footer">
-                                    <p className="price"><strong>{item.price} Tokens</strong></p>
+                                    <p className="price"><strong>{item.price} {symbol}</strong></p>
                                     <Button
                                         text="Buy"
                                         onClick={() => handleBuy(item)}
@@ -90,8 +92,6 @@ export default function Store() {
                     </div>
                 </div>
             ))}
-
-
         </div>
     );
 }

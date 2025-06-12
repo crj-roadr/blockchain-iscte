@@ -6,7 +6,7 @@ import { ICourse, ISubject } from '../Interfaces/ICourse';
 import { issueCredential } from '../web3/diploma';
 import { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
-import { rewardTokens, getTokenBalance } from '../web3/course-token';
+import { rewardTokens, getTokenBalance, getSymbol } from '../web3/course-token';
 
 
 type DashboardProps = {
@@ -32,6 +32,7 @@ const defaultCourse: ICourse = {
 
 export default function Dashboard({ user, wallet }: DashboardProps) {
     const [tokenBalance, setTokenBalance] = useState<string>('0');
+    const [symbol, setSymbol] = useState<string>('');
     const [course, setCourse] = useState<ICourse>(() => {
         const saved = localStorage.getItem('course');
         return saved ? JSON.parse(saved) : defaultCourse;
@@ -50,10 +51,22 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     const studentName = user;
 
     useEffect(() => {
+        const init = async () => {
+            const symbol = await getSymbol();
+            if (wallet) {
+                const tokenBalance = await getTokenBalance(wallet);
+                setTokenBalance(tokenBalance);
+            }
+            setSymbol(symbol);
+        };
+        init();
+    }, []);
+
+    useEffect(() => {
         localStorage.setItem('course', JSON.stringify(course));
-        if (wallet) {
-            fetchBalance();
-        }
+        // if (wallet) {
+        //     fetchBalance();
+        // }
     }, [course]);
 
     const markSubjectCompleted = async (completeSubject: ISubject) => {
@@ -91,10 +104,10 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
             });
     };
 
-    const fetchBalance = async () => {
-        const balance = await getTokenBalance(wallet);
-        setTokenBalance(balance);
-    };
+    // const fetchBalance = async () => {
+    //     const balance = await getTokenBalance(wallet);
+    //     setTokenBalance(balance);
+    // };
 
     return (
         <div className='container'>
@@ -104,9 +117,9 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                     <div className='card-container'>
                         <Card title={'Course'} onClaim={handleIssue} cousePercentage={coursePercentage} />
                         {loading && <Spinner />}
-                        <Card title={'Current year'} yearPercentage={yearPercentage} />
+                        <Card title={'Current year'} yearPercentage={coursePercentage} />
                         <Card title={'Grade'} subtext={'16.5/20'} />
-                        <Card title={'Wallet'} subtext={`${parseFloat(tokenBalance)} tokens`} />
+                        <Card title={'Wallet'} subtext={`${parseFloat(tokenBalance)} ${symbol}`} />
                     </div>
 
                     <div className='bottom-section'>

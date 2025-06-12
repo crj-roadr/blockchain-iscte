@@ -58,7 +58,7 @@ export default function Card({ title, cousePercentage, onClaim, yearPercentage, 
 
                 {cousePercentage === 100 && onClaim && title === "Course" && (
                     <button onClick={() => onClaim()} className="claim-button">
-                        Claim
+                        Claim certificate
                     </button>
                 )}
             </div>
