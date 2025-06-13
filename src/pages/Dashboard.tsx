@@ -7,6 +7,7 @@ import { issueCredential } from '../web3/diploma';
 import { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
 import { rewardTokens, getTokenBalance, getSymbol } from '../web3/course-token';
+import Button from '../components/Button';
 
 
 type DashboardProps = {
@@ -93,7 +94,8 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const handleIssue = () => {
         setLoading(true);
-        issueCredential(studentAddress, studentName, course.name, course.university)
+        // issueCredential(studentAddress, studentName, course.name, course.university)
+        issueCredential()
             .then(() => {
                 setLoading(false);
                 setCourse(prevCourse => ({ ...prevCourse, concluded: true }));
@@ -102,6 +104,10 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                 setLoading(false);
                 console.error('Error issuing credential:', err);
             });
+    };
+
+    const resetCourse = () => {
+        setCourse(defaultCourse);
     };
 
     // const fetchBalance = async () => {
@@ -143,6 +149,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                     <div className="course-completed-message">
                         <h2 className='title'>Congratulations!</h2>
                         <p className='conclusion-subtitle'>You have completed your course <strong>{course?.name}</strong></p>
+                        <Button text='reset' onClick={resetCourse}></Button>
                     </div>
                 </div>
             )

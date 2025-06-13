@@ -27,19 +27,19 @@ import {
 } from '@0xpolygonid/js-sdk';
 
 export const issueCredential = async (
-  studentAddress: string,
-  studentName: string,
-  degree: string,
-  university: string
+//   studentAddress: string,
+//   studentName: string,
+//   degree: string,
+//   university: string
 ) => {
   if (import.meta.env.VITE_ENV === 'localhost') {
     await switchToLocalhost();
   } else {
     await switchToAmoy();
   }
-  const provider = getProvider();
-  const signer = await provider.getSigner();
-  const contract = new ethers.Contract(diplomaAddress, diplomaABI, signer);
+//   const provider = getProvider();
+//   const signer = await provider.getSigner();
+//   const contract = new ethers.Contract(diplomaAddress, diplomaABI, signer);
 
   // Privado ID issue identity and credential flow
 
@@ -135,13 +135,13 @@ export const issueCredential = async (
 
     console.log("Issued Credential", issuerCred);
 
-    const tx = await contract.issueCredential(
-      studentAddress,
-      studentName,
-      degree,
-      university
-    );
-    await tx.wait();
+    // const tx = await contract.issueCredential(
+    //   studentAddress,
+    //   studentName,
+    //   degree,
+    //   university
+    // );
+    // await tx.wait();
     alert('Credential issued successfully!');
   } catch (error) {
     console.error('Error issuing credential:', error);
