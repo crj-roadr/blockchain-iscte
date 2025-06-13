@@ -7,6 +7,7 @@ import { issueCredential } from '../web3/diploma';
 import { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
 import { rewardTokens, getTokenBalance, getSymbol } from '../web3/course-token';
+import Button from '../components/Button';
 
 
 type DashboardProps = {
@@ -93,7 +94,8 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const handleIssue = () => {
         setLoading(true);
-        issueCredential(studentAddress, studentName, course.name, course.university)
+        // issueCredential(studentAddress, studentName, course.name, course.university)
+        issueCredential()
             .then(() => {
                 setLoading(false);
                 setCourse(prevCourse => ({ ...prevCourse, concluded: true }));
@@ -102,6 +104,19 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                 setLoading(false);
                 console.error('Error issuing credential:', err);
             });
+    };
+
+    const resetCourse = () => {
+        setCourse(defaultCourse);
+        localStorage.removeItem("31613162306363302d623437352d353934372d613939302d3965613837383836323262322b300000000000000000000000000000000000000000000000000000000000000000000000000000")
+        localStorage.removeItem("31613162306363302d623437352d353934372d613939302d3965613837383836323262322b300000000000000000000000000000000000000000000000000000000000000000000000000000a5211125f6dc4dc854ad445b6444f70817fe26567c58d92c255c4ef8133acd04")
+        localStorage.removeItem("62636633393464312d633130352d353263632d613461662d3339353333393831386363342b300000000000000000000000000000000000000000000000000000000000000000000000000000")
+        localStorage.removeItem("62636633393464312d633130352d353263632d613461662d3339353333393831386363342b3000000000000000000000000000000000000000000000000000000000000000000000000000006091193ec58a6c020183c2d889a92c32410f31812595f228d67a2bf37e04a729")
+        localStorage.removeItem("identity")
+        localStorage.removeItem("keystore")
+        localStorage.removeItem("merkle-tree-meta")
+        localStorage.removeItem("credential")
+        localStorage.removeItem("profile")
     };
 
     // const fetchBalance = async () => {
@@ -143,6 +158,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                     <div className="course-completed-message">
                         <h2 className='title'>Congratulations!</h2>
                         <p className='conclusion-subtitle'>You have completed your course <strong>{course?.name}</strong></p>
+                        <Button text='reset' onClick={resetCourse}></Button>
                     </div>
                 </div>
             )

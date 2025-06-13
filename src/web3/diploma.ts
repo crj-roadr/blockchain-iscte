@@ -136,7 +136,7 @@ export const issueCredential = async (
 
     console.log("Issued Credential", issuerCred);
 
-    // await contract.issueCredential(
+    // const tx = await contract.issueCredential(
     //   studentAddress,
     //   studentName,
     //   degree,
