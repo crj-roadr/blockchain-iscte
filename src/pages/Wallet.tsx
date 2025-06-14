@@ -3,18 +3,19 @@ import { isWalletConnected } from '../web3/web3';
 import { getCredential, revokeCredential } from '../web3/diploma';
 import './wallet.css';
 import Spinner from '../components/Spinner';
+import { W3CCredential } from '@0xpolygonid/js-sdk';
 
-type Certificate = {
-    studentName: string;
-    degree: string;
-    university: string;
-    issueDate: string;
-    issued: any;
-};
+// type Certificate = {
+//     studentName: string;
+//     degree: string;
+//     university: string;
+//     issueDate: string;
+//     issued: any;
+// };
 
 export default function Wallet() {
     const [wallet, setWallet] = useState<string | null>(null);
-    const [certificate, setCertificate] = useState<Certificate | null>(null);
+    const [certificate, setCertificate] = useState<W3CCredential | null>(null);
     const [loading, setLoading] = useState(false);
 
 
@@ -24,16 +25,15 @@ export default function Wallet() {
             if (connected) {
                 setWallet(connected);
                 try {
-                    const res = await getCredential(connected);
+                    const studentCredential = localStorage.getItem("studentCredential");
+                    const credential = studentCredential ? JSON.parse(studentCredential) : null;
+                    const credentialId = credential ? credential.credentialSubject.id : "";
+                    const res = await getCredential(credentialId);
                     if (res) {
-                        const parsed: Certificate = typeof res === 'string'
-                            ? JSON.parse(res)
-                            : res;
-
-                        setCertificate(parsed);
+                        setCertificate(res);
                     }
                 } catch (err) {
-                    // console.error('Erro ao obter certificado:', err);
+                    console.error('Erro ao obter certificado:', err);
                     // setCertificate(null);
                 }
             }
@@ -53,7 +53,7 @@ export default function Wallet() {
                     localStorage.removeItem('course');
                 }
             });
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error revoking certificate:', err);
         } finally {
             setLoading(false);
@@ -78,10 +78,10 @@ export default function Wallet() {
                             </button>
 
                             <h3>🎓 Certificate Obtained</h3>
-                            <h4>{certificate.degree}</h4>
-                            <p><strong>Student:</strong> {certificate.studentName}</p>
-                            <p><strong>University:</strong> {certificate.university}</p>
-                            <p><strong>Date Issued:</strong> {new Date(Number(certificate.issueDate) * 1000).toLocaleDateString()}</p>
+                            <h4>{certificate.credentialSubject.degree as string}</h4>
+                            <p><strong>Student:</strong> {certificate.credentialSubject.studentName as string}</p>
+                            <p><strong>University:</strong> {certificate.credentialSubject.university as string}</p>
+                            <p><strong>Date Issued:</strong> {new Date(Number(certificate.credentialSubject.issuanceDate) * 1000).toLocaleDateString()}</p>
                         </div>
 
                     ) : (

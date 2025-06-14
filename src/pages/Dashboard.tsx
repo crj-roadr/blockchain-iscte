@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
 import { rewardTokens, getTokenBalance, getSymbol } from '../web3/course-token';
 import Button from '../components/Button';
+import { W3CCredential } from '@0xpolygonid/js-sdk';
 
 
 type DashboardProps = {
@@ -44,8 +45,9 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     });
 
     const [coursePercentage, setCoursePercentage] = useState<number>(80);
+    const [credential, setCredential] = useState<W3CCredential | undefined>();
 
-    const [yearPercentage] = useState(50);
+    // const [yearPercentage] = useState(50);
     const [loading, setLoading] = useState(false);
 
     const studentAddress = wallet;
@@ -69,6 +71,10 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
         //     fetchBalance();
         // }
     }, [course]);
+
+    useEffect(() => {
+        if (credential) localStorage.setItem("studentCredential", JSON.stringify(credential));
+    }, [credential]);
 
     const markSubjectCompleted = async (completeSubject: ISubject) => {
         setLoading(true);
@@ -94,16 +100,23 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const handleIssue = () => {
         setLoading(true);
-        // issueCredential(studentAddress, studentName, course.name, course.university)
-        issueCredential()
-            .then(() => {
+        issueCredential(studentAddress, studentName, course.name, course.university)
+        // issueCredential()
+            .then((value) => {
                 setLoading(false);
                 setCourse(prevCourse => ({ ...prevCourse, concluded: true }));
+                setCredential(value);            
             })
             .catch((err) => {
                 setLoading(false);
                 console.error('Error issuing credential:', err);
             });
+    };
+
+    const getCredentialFromLocalStorage = () => {
+        const studentCredential = localStorage.getItem("studentCredential");
+        if (studentCredential) return JSON.parse(studentCredential);
+        else return credential
     };
 
     const resetCourse = () => {
@@ -117,6 +130,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
         localStorage.removeItem("merkle-tree-meta")
         localStorage.removeItem("credential")
         localStorage.removeItem("profile")
+        localStorage.removeItem("studentCredential")
     };
 
     // const fetchBalance = async () => {
@@ -158,6 +172,17 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                     <div className="course-completed-message">
                         <h2 className='title'>Congratulations!</h2>
                         <p className='conclusion-subtitle'>You have completed your course <strong>{course?.name}</strong></p>
+                        <br />
+                        <p className='conclusion-subtitle'><strong>Credential</strong></p>
+                        <div style={{border: "2px solid black", color: "black", padding: "10px 20px"}}>
+                            <p><strong>Degree: </strong>{getCredentialFromLocalStorage().credentialSubject.degree as string}</p>
+                            <p><strong>Id: </strong>{getCredentialFromLocalStorage().credentialSubject.id as string}</p>
+                            <p><strong>Student Wallet Address: </strong>{getCredentialFromLocalStorage().credentialSubject.studentAddress as string}</p>
+                            <p><strong>Student Name: </strong>{getCredentialFromLocalStorage().credentialSubject.studentName as string}</p>
+                            <p><strong>Credential type: </strong>{getCredentialFromLocalStorage().credentialSubject.type as string}</p>
+                            <p><strong>University: </strong>{getCredentialFromLocalStorage().credentialSubject.university as string}</p>
+                        </div>
+                        
                         <Button text='reset' onClick={resetCourse}></Button>
                     </div>
                 </div>

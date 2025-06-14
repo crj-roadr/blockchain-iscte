@@ -26,22 +26,7 @@ import {
   CredentialRequest,
 } from '@0xpolygonid/js-sdk';
 
-export const issueCredential = async (
-  // studentAddress: string,
-  // studentName: string,
-  // degree: string,
-  // university: string
-) => {
-  if (import.meta.env.VITE_ENV === 'localhost') {
-    await switchToLocalhost();
-  } else {
-    await switchToAmoy();
-  }
-  // const provider = getProvider();
-  // const signer = await provider.getSigner();
-  // const contract = new ethers.Contract(diplomaAddress, diplomaABI, signer);
-
-  // Privado ID issue identity and credential flow
+// Privado ID data storage and dependencies initialization
 
   const dataStorage: IDataStorage = {
     credential: new CredentialStorage(
@@ -74,6 +59,21 @@ export const issueCredential = async (
   );
   const credWallet = new CredentialWallet(dataStorage, statusRegistry);
   const wallet = new IdentityWallet(kms, dataStorage, credWallet);
+
+export const issueCredential = async (
+  studentAddress: string,
+  studentName: string,
+  degree: string,
+  university: string
+) => {
+  if (import.meta.env.VITE_ENV === 'localhost') {
+    await switchToLocalhost();
+  } else {
+    await switchToAmoy();
+  }
+  // const provider = getProvider();
+  // const signer = await provider.getSigner();
+  // const contract = new ethers.Contract(diplomaAddress, diplomaABI, signer);
 
   const seedPhraseIssuer: Uint8Array = byteEncoder.encode(
     'seedseedseedseedseedseedseedseed'
@@ -108,29 +108,37 @@ export const issueCredential = async (
         },
       });
 
+      // const courseString = localStorage.getItem("course");
+      // const userName =  localStorage.getItem("user") as string;
+      // const studentWalletAddress =  localStorage.getItem("wallet") as string;
+      // const course = courseString ? JSON.parse(courseString) : null;
+
+
     //   Create Credential Request (credentialRequest) and Issue Credential (issueCredential)
     const claimReq: CredentialRequest = {
       credentialSchema:
-        'https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json/KYCAgeCredential-v2.json',
-      type: 'KYCAgeCredential',
+        'https://raw.githubusercontent.com/crj-roadr/blockchain-iscte/refs/heads/main/credential-schema/EducationalInstitutionStudentCredential.json',
+      type: 'StudentCredentialAuthenticationType',
+      // credentialSubject: {
+      //     id: userDID.toString(),
+      //     birthday: 19960424,
+      //     documentType: 99,
+      // },
       credentialSubject: {
-          id: userDID.toString(),
-          birthday: 19960424,
-          documentType: 99,
+        id: userDID.string(),
+        studentAddress,
+        studentName,
+        degree,
+        university,
       },
-    //   credentialSubject: {
-    //     id: userDID.string(),
-    //     studentAddress,
-    //     studentName,
-    //     degree,
-    //     university,
-    //   },
       expiration: 12345678888,
       revocationOpts: {
         type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
         id: 'https://rhs-staging.polygonid.me',
       },
     };
+    console.log("=====================Credential Subject=====================");
+    console.log(`id: ${userDID.string()}, studentAddress: ${studentAddress}, studentName: ${studentName}, degree: ${degree}, university: ${university}`);
     console.log("=====================Calling issueCredential=====================");
     const issuerCred = await wallet.issueCredential(issuerDID, claimReq);
 
@@ -144,24 +152,25 @@ export const issueCredential = async (
     // );
     // await tx.wait();
     alert('Credential issued successfully!');
+    return issuerCred;
   } catch (error) {
     console.error('Error issuing credential:', error);
     alert('Failed to issue credential!');
   }
 };
 
-export const getCredential = async (studentAddress: string) => {
+export const getCredential = async (credentialId: string) => {
   if (import.meta.env.VITE_ENV === 'localhost') {
     await switchToLocalhost();
   } else {
     await switchToAmoy();
   }
-  const provider = getProvider();
-  const contract = new ethers.Contract(diplomaAddress, diplomaABI, provider);
+  // const provider = getProvider();
+  // const contract = new ethers.Contract(diplomaAddress, diplomaABI, provider);
 
   try {
-    const credential = await contract.getCredential(studentAddress);
-    return credential;
+    const credential = await wallet.credentialWallet.findById(credentialId);
+    return credential ? credential : null;
   } catch (error) {
     console.error('Error getting credential:', error);
   }
