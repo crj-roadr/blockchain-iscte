@@ -10,18 +10,17 @@ import { rewardTokens, getTokenBalance, getSymbol } from '../web3/course-token';
 import Button from '../components/Button';
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 
-
 type DashboardProps = {
     user: string;
     wallet: string;
 };
 
 const defaultSubjects: ISubject[] = [
-    { code: 10000, name: 'Blockchain', completed: false },
-    { code: 10001, name: 'AI Ethics', completed: true },
-    { code: 10002, name: 'NLP', completed: true },
-    { code: 10003, name: 'Computer Vision', completed: true },
-    { code: 10004, name: 'Reinforcement Learning', completed: true },
+    { code: 10000, name: 'Blockchain', grade: 18, completed: false },
+    { code: 10001, name: 'AI Ethics', grade: 17, completed: true },
+    { code: 10002, name: 'NLP', grade: 17, completed: true },
+    { code: 10003, name: 'Computer Vision', grade: 16, completed: true },
+    { code: 10004, name: 'Reinforcement Learning', grade: 16, completed: true },
 ];
 
 const defaultCourse: ICourse = {
@@ -43,10 +42,9 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     const [activeSubjects, setActiveSubjects] = useState<ISubject[]>(() => {
         return defaultSubjects;
     });
-
     const [coursePercentage, setCoursePercentage] = useState<number>(80);
     const [credential, setCredential] = useState<W3CCredential | undefined>();
-
+    const [averageGrade, setAverageGrade] = useState<number | null>(null);
     // const [yearPercentage] = useState(50);
     const [loading, setLoading] = useState(false);
 
@@ -66,10 +64,20 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     }, []);
 
     useEffect(() => {
+        const grades = activeSubjects
+            .filter(subject => subject.completed)
+            .map(subject => subject.grade);
+
+        if (grades.length > 0) {
+            const average = grades.reduce((sum, grade) => sum + grade, 0) / grades.length;
+            setAverageGrade(parseFloat(average.toFixed(1)));
+        } else {
+            setAverageGrade(null);
+        }
+    }, [activeSubjects]);
+
+    useEffect(() => {
         localStorage.setItem('course', JSON.stringify(course));
-        // if (wallet) {
-        //     fetchBalance();
-        // }
     }, [course]);
 
     useEffect(() => {
@@ -78,7 +86,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
 
     const markSubjectCompleted = async (completeSubject: ISubject) => {
         setLoading(true);
-        const rewarded = await rewardTokens(wallet, 10);
+        const rewarded = await rewardTokens(wallet, completeSubject.grade ? completeSubject.grade : 10);
         const updatedBalance = await getTokenBalance(wallet);
         setTokenBalance(updatedBalance);
 
@@ -101,22 +109,15 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
     const handleIssue = () => {
         setLoading(true);
         issueCredential(studentAddress, studentName, course.name, course.university)
-        // issueCredential()
             .then((value) => {
                 setLoading(false);
                 setCourse(prevCourse => ({ ...prevCourse, concluded: true }));
-                setCredential(value);            
+                setCredential(value);
             })
             .catch((err) => {
                 setLoading(false);
                 console.error('Error issuing credential:', err);
             });
-    };
-
-    const getCredentialFromLocalStorage = () => {
-        const studentCredential = localStorage.getItem("studentCredential");
-        if (studentCredential) return JSON.parse(studentCredential);
-        else return credential
     };
 
     const resetCourse = () => {
@@ -147,7 +148,7 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                         <Card title={'Course'} onClaim={handleIssue} cousePercentage={coursePercentage} />
                         {loading && <Spinner />}
                         <Card title={'Current year'} yearPercentage={coursePercentage} />
-                        <Card title={'Grade'} subtext={'16.5/20'} />
+                        <Card title={'Grade'} subtext={averageGrade ? `${averageGrade}/20` : 'N/A'} />
                         <Card title={'Wallet'} subtext={`${parseFloat(tokenBalance)} ${symbol}`} />
                     </div>
 
@@ -172,22 +173,11 @@ export default function Dashboard({ user, wallet }: DashboardProps) {
                     <div className="course-completed-message">
                         <h2 className='title'>Congratulations!</h2>
                         <p className='conclusion-subtitle'>You have completed your course <strong>{course?.name}</strong></p>
-                        <br />
-                        <p className='conclusion-subtitle'><strong>Credential</strong></p>
-                        <div style={{border: "2px solid black", color: "black", padding: "10px 20px"}}>
-                            <p><strong>Degree: </strong>{getCredentialFromLocalStorage().credentialSubject.degree as string}</p>
-                            <p><strong>Id: </strong>{getCredentialFromLocalStorage().credentialSubject.id as string}</p>
-                            <p><strong>Student Wallet Address: </strong>{getCredentialFromLocalStorage().credentialSubject.studentAddress as string}</p>
-                            <p><strong>Student Name: </strong>{getCredentialFromLocalStorage().credentialSubject.studentName as string}</p>
-                            <p><strong>Credential type: </strong>{getCredentialFromLocalStorage().credentialSubject.type as string}</p>
-                            <p><strong>University: </strong>{getCredentialFromLocalStorage().credentialSubject.university as string}</p>
-                        </div>
-                        
+
                         <Button text='reset' onClick={resetCourse}></Button>
                     </div>
                 </div>
-            )
-            }
+            )}
         </div>
     );
 }

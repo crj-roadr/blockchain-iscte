@@ -2,7 +2,7 @@ export interface ISubject {
     code: number;
     name: string;
     completed: boolean;
-    grade?: number;
+    grade: number;
 }
 
 export interface ICourse {

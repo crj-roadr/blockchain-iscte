@@ -38,7 +38,7 @@ export default function CourseCardSlider({ activeSubjects, onMarkCompleted }: Co
                         <div className="course-code">{subject.code}</div>
                         <div className="course-name">{subject.name}</div>
                         <div className="card-spacer"></div>
-
+                        <div className="course-grade">Grade: {subject.grade}</div>
                         {subject.completed ? (
                             <div className="completed-label">
                                 <span className="check-icon">✔</span> Completed

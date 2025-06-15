@@ -1,64 +1,42 @@
 import { useEffect, useState } from 'react';
 import { isWalletConnected } from '../web3/web3';
-import { getCredential, revokeCredential } from '../web3/diploma';
+import { getCredential } from '../web3/diploma';
 import './wallet.css';
 import Spinner from '../components/Spinner';
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 
-// type Certificate = {
-//     studentName: string;
-//     degree: string;
-//     university: string;
-//     issueDate: string;
-//     issued: any;
-// };
-
 export default function Wallet() {
     const [wallet, setWallet] = useState<string | null>(null);
-    const [certificate, setCertificate] = useState<W3CCredential | null>(null);
+    const [credential, setCredential] = useState<W3CCredential | null>(null);
     const [loading, setLoading] = useState(false);
-
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             const connected = isWalletConnected();
-            if (connected) {
+            setWallet(connected);
+            try {
+                const connected = isWalletConnected();
+                if (!connected) return;
+
                 setWallet(connected);
-                try {
-                    const studentCredential = localStorage.getItem("studentCredential");
-                    const credential = studentCredential ? JSON.parse(studentCredential) : null;
-                    const credentialId = credential ? credential.credentialSubject.id : "";
-                    const res = await getCredential(credentialId);
-                    if (res) {
-                        setCertificate(res);
-                    }
-                } catch (err) {
-                    console.error('Erro ao obter certificado:', err);
-                    // setCertificate(null);
-                }
+                const studentCredential = localStorage.getItem("studentCredential");
+                const credential = studentCredential ? JSON.parse(studentCredential) : null;
+                const credentialId = credential ? credential.credentialSubject.id : "";
+
+                const res = await getCredential(credentialId); //retreiving null
+                setCredential(res || credential || null);
+
+            } catch (err) {
+                console.error('Erro ao obter certificado:', err);
+            }
+            finally {
+                setLoading(false);
             }
         };
 
         fetchData();
     }, []);
-
-    const handleRevoke = async () => {
-        if (!wallet) return;
-        setLoading(true);
-
-        try {
-            await revokeCredential(wallet).then((res) => {
-                if (res) {
-                    setCertificate(null);
-                    localStorage.removeItem('course');
-                }
-            });
-        } catch (err) {
-            console.error('Error revoking certificate:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="wallet-container">
@@ -67,21 +45,16 @@ export default function Wallet() {
                     {loading && <Spinner />}
                     <p>Connected wallet: {wallet}</p>
 
-                    {certificate ? (
-                        <div className="certificate-card">
-                            <button
-                                onClick={handleRevoke}
-                                disabled={loading}
-                                className="revoke-button"
-                            >
-                                🗑
-                            </button>
-
+                    {credential ? (
+                        <div className='certificate-card'>
                             <h3>🎓 Certificate Obtained</h3>
-                            <h4>{certificate.credentialSubject.degree as string}</h4>
-                            <p><strong>Student:</strong> {certificate.credentialSubject.studentName as string}</p>
-                            <p><strong>University:</strong> {certificate.credentialSubject.university as string}</p>
-                            <p><strong>Date Issued:</strong> {new Date(Number(certificate.credentialSubject.issuanceDate) * 1000).toLocaleDateString()}</p>
+
+                            <p><strong>Degree: </strong>{credential.credentialSubject.degree as string}</p>
+                            <p><strong>Id: </strong>{credential.credentialSubject.id as string}</p>
+                            <p><strong>Student Wallet Address: </strong>{credential.credentialSubject.studentAddress as string}</p>
+                            <p><strong>Student Name: </strong>{credential.credentialSubject.studentName as string}</p>
+                            <p><strong>Credential type: </strong>{credential.credentialSubject.type as string}</p>
+                            <p><strong>University: </strong>{credential.credentialSubject.university as string}</p>
                         </div>
 
                     ) : (
